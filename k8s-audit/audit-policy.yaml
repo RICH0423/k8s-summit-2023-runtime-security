@@ -1,0 +1,64 @@
+apiVersion: audit.k8s.io/v1 # This is required.
+kind: Policy
+
+# Prevent requests in the RequestReceived stage from generating audit events.
+omitStages:
+  - "RequestReceived"
+
+rules:
+  # Log pod changes at RequestResponse level
+  - level: RequestResponse
+    resources:
+    - group: ""
+      resources: ["pods"]
+  # Log "pods/log", "pods/status" at Metadata level
+  - level: Metadata
+    resources:
+    - group: ""
+      resources: ["pods/log", "pods/status"]
+  # Exclude logging requests to a configmap called "controller-config"
+  - level: None
+    resources:
+    - group: ""
+      resources: ["configmaps"]
+      resourceNames: ["controller-config"]
+  # Don't log watch requests by the "system:kube-proxy" on endpoints or services
+  - level: None
+    users: ["system:kube-proxy"]
+    verbs: ["watch"]
+    resources:
+    - group: "" # core API group
+      resources: ["endpoints", "services"]
+  # Log deployment changes at RequestResponse level
+  - level: RequestResponse
+    resources:
+    - group: ""
+      resources: ["deployments"]
+  # Log service changes at metadata level
+  - level: Metadata
+    resources:
+    - group: ""
+      resources: ["services"]
+  # Log the request body of configmap changes in the kube-system namespace.
+  - level: Request
+    resources:
+    - group: "" # core API group
+      resources: ["configmaps"]
+    # You can use an empty string [""] to select resources not associated with a namespace.
+    namespaces: ["kube-system"]
+  # Log configmap and secret changes in all other namespaces at the Metadata level.
+  - level: Metadata
+    resources:
+    - group: "" # core API group
+      resources: ["secrets", "configmaps"]
+  # Log all other resources in core and extensions at the Request level.
+  - level: Request
+    resources:
+    - group: "" # core API group
+    - group: "extensions" # Version of group should NOT be included.
+  # A wild-card rule to log all other requests at the Metadata level.
+  - level: Metadata
+    # Long-running requests like watches that fall under this rule will not
+    # generate an audit event in RequestReceived.
+    omitStages:
+      - "RequestReceived"

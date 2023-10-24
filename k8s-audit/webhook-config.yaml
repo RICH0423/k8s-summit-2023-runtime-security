@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Config
+clusters:
+- name: falco
+  cluster:
+    # certificate-authority: /path/to/ca.crt # for https
+    server: http://localhost:30007/k8s-audit
+contexts:
+- context:
+    cluster: falco
+    user: ""
+  name: default-context
+current-context: default-context
+preferences: {}
+users: []
