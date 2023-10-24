@@ -1,5 +1,7 @@
 # K8s Summit 2023 Rntime Security
 
+![k8s-summit-2023](./img/k8s-summit-2023.png)
+
 ##  Hands-on - Kubernetes audit logs and Falco Integration (k8saudit plugin)
 
 ### Enable K8s audit log and install Falco
