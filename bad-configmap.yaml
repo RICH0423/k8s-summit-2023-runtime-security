@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bad-config
+  namespace: default
+data:
+  access.properties: |
+    account=admin
+    password=passwd1234    
+
+
+
